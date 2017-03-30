@@ -29,7 +29,7 @@ public class TestPCA9685 {
  
     @SuppressWarnings("resource") 
     public static void main(String args[]) throws Exception { 
-        System.out.println("<--Pi4J--> PCA9685 PWM Example ... started."); 
+        System.out.println("<--Pi4J--> PCA9685 PWM TEST ... started."); 
         // This would theoretically lead into a resolution of 5 microseconds per step: 
         // 4096 Steps (12 Bit) 
         // T = 4096 * 0.000005s = 0.02048s 
@@ -40,34 +40,31 @@ public class TestPCA9685 {
         // Calculate correction factor: 51.65 / 48.828 = 1.0578 
         // --> To measure actual frequency set frequency without correction factor(or set to 1) 
         BigDecimal frequencyCorrectionFactor = new BigDecimal("1.0578"); 
+        
         // Create custom PCA9685 GPIO provider 
         I2CBus bus = I2CFactory.getInstance(I2CBus.BUS_1); 
-        System.out.println("set stage 1");
+        
         final PCA9685GpioProvider gpioProvider = new PCA9685GpioProvider(bus, 0x40, frequency, frequencyCorrectionFactor); 
-        System.out.println("2");
+      
         // Define outputs in use for this example 
-        GpioPinPwmOutput[] myOutputs = provisionPwmOutputs(gpioProvider); 
-        System.out.println("3");
-        // Reset outputs 
-        //gpioProvider.reset(); 
-        System.out.println("gpio Reset");
-        // 
-        // Set full ON 
-       //gpioProvider.setAlwaysOn(PCA9685Pin.PWM_00); 
-        // Set full OFF 
-        gpioProvider.setAlwaysOff(PCA9685Pin.PWM_11); 
+        GpioPinPwmOutput[] myOutputs = provisionPwmOutputs(gpioProvider);      
+        
         // Set 0.9ms pulse (R/C Servo minimum position)  
         double frequency_double = Double.parseDouble(frequency.toString());
         
         double steps = (1/frequency_double)*1000000;
         
         System.out.println("VALUE OF STEPS IS: " + steps);
+        int interval = 1;
+        System.out.println("Test Interval " + interval);
         int step_int = (int)steps;
-        for(int x = 0 ; x <= 653;x++){
-            gpioProvider.setPwm(PCA9685Pin.PWM_02 , 100+x);
-            gpioProvider.setPwm(PCA9685Pin.PWM_03 , 100+x);
-            System.out.println(500+x);
-            Thread.sleep(1000);
+        for(int x = 0 ; x <= 700;x++){
+            gpioProvider.setPwm(PCA9685Pin.PWM_00 , 20+x);
+            gpioProvider.setPwm(PCA9685Pin.PWM_01 , 100+x);
+            System.out.println(20+x);
+            x= interval-1+x;
+            System.in.read();
+        
         }
         
         System.out.println("done");
